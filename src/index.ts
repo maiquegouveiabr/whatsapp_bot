@@ -1,4 +1,4 @@
-import qrcode from "qrcode-terminal";
+import qrcode from "qrcode";
 import { Client, LocalAuth } from "whatsapp-web.js";
 
 import sendDelay from "./util/sendDelay";
@@ -29,10 +29,14 @@ const client = new Client({
   authStrategy: new LocalAuth(),
 });
 
-client.on("qr", (qr) => {
-  qrcode.generate(qr, { small: true });
+client.on("qr", async (qr) => {
+  try {
+    const qrImage = await qrcode.toDataURL(qr); // Convert QR to Base64 image
+    console.log("Scan this QR Code:", qrImage); // Log the Base64 image link
+  } catch (err) {
+    console.error("Error generating QR Code:", err);
+  }
 });
-
 client.on("ready", () => {
   console.log("Client is ready.");
 });
